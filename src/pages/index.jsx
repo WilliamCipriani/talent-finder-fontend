@@ -1,6 +1,37 @@
+import { useState } from 'react';
+import axios from '../lib/axios';
+import { useRouter } from 'next/router';
 import Image from "next/image";
+import Link from 'next/link';
 
 export default function Home() {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/auth/login', {
+        email,
+        password,
+      });
+
+      const { token } = response.data;
+
+      // Guardar el token en localStorage
+      localStorage.setItem('token', token);
+
+      // Redirigir al usuario a la página de inicio
+      router.push('/inicio');
+    } catch (err) {
+      setError('Login failed. Please check your email and password.');
+      console.error('Error during login:', err);
+    }
+  };
+
   return (
     <>
     <div className="h-screen mx-8 sm:mx-20 md:mx-40 lg:mx-52 bg-[#f5f5f5]">
@@ -18,7 +49,7 @@ export default function Home() {
           </div>
     
           <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-            <form>
+            <form onSubmit={handleLogin}>
               <div
                 className="flex flex-row items-center justify-center lg:justify-start">
                 <p className="mb-0 me-4 text-lg">Sign in with</p>
@@ -74,10 +105,14 @@ export default function Home() {
             
               <div className="relative mb-6">
                 <input
-                  type="text"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none"
                   id="exampleFormControlInput2"
-                  placeholder="Email address" />
+                  placeholder="Email address"
+                  required 
+                  />
                 <label
                   htmlFor="exampleFormControlInput2"
                   className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[twe-input-state-active]:-translate-y-[1.15rem] peer-data-[twe-input-state-active]:scale-[0.8] motion-reduce:transition-none"
@@ -87,9 +122,13 @@ export default function Home() {
               <div className="relative mb-6">
                 <input
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none"
                   id="exampleFormControlInput22"
-                  placeholder="Password" />
+                  required
+                  placeholder="Password" 
+                  />
                 <label
                   htmlFor="exampleFormControlInput22"
                   className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[twe-input-state-active]:-translate-y-[1.15rem] peer-data-[twe-input-state-active]:scale-[0.8] motion-reduce:transition-none"
@@ -113,13 +152,14 @@ export default function Home() {
                 </div>
     
               
-                <a href="#!">Forgot password?</a>
+                <Link href="/signup">Forgot password?</Link>
               </div>
     
             
               <div className="text-center lg:text-left">
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button
-                  type="button"
+                  type="submit"
                   className="inline-block w-full rounded bg-primary px-7 pb-2 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2"
                   data-twe-ripple-init
                   data-twe-ripple-color="light">
