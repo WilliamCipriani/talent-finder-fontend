@@ -1,14 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import SearchJob from "@/components/SearchJob";
 import JobCard from "@/components/JobCard";
 import Header from "@/components/Header";
-import jobs from "../../../data/jobs.json";
+import axios from 'axios';
 
 export default function InicioPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [jobType, setJobType] = useState("");
-  const [filteredJobs, setFilteredJobs] = useState(jobs);
+  const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/jobs/jobs'); // Usa tu endpoint de la API
+        setJobs(response.data);
+        setFilteredJobs(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   const handleSearch = (term, type) => {
     setSearchTerm(term);
@@ -33,6 +53,9 @@ export default function InicioPage() {
 
     setFilteredJobs(filtered);
   };
+
+  if (loading) return <p>Cargando trabajos...</p>;
+  if (error) return <p>Error al cargar trabajos: {error}</p>;
 
   return (
     <>

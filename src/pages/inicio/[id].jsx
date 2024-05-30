@@ -1,15 +1,43 @@
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Header from "@/components/Header"
 import Layout from "@/components/Layout"
-import jobs from '../../../data/jobs.json';
+import axios from 'axios';
 
-export default function DetalleTrabajo() {
+export default function DetalleTrabajo({  job }) {
 
     const router = useRouter();
-    const { id } = router.query;
+    const [userCV, setUserCV] = useState(null);
 
-    const job = jobs.find(job => job.id === Number(id));
-    
+    useEffect(() => {
+        // Obtener el CV del usuario
+        const fetchUserCV = async () => {
+            try {
+                const response = await axios.get('/cv/user-cv', { withCredentials: true });
+                setUserCV(response.data.id); // Asegúrate de que response.data.id sea el ID del CV
+            } catch (error) {
+                console.error('Error al obtener el CV del usuario:', error);
+            }
+        };
+
+        fetchUserCV();
+    }, []);
+
+    const handleApply = async () => {
+        if (!userCV) {
+            alert('No tienes un CV seleccionado.');
+            return;
+        }
+
+        try {
+            await axios.post('/applications/apply', { job_id: job.id, cv_id: userCV }, { withCredentials: true });
+            alert('Postulación realizada con éxito');
+        } catch (error) {
+            console.error('Error al postular:', error);
+            alert('Hubo un error al postular. Inténtalo de nuevo más tarde.');
+        }
+    };
+
     // Asegúrate de que el trabajo existe
     if (!job) {
         return <p>Job not found</p>;
@@ -44,15 +72,65 @@ export default function DetalleTrabajo() {
                 </div>
 
                 <div className="mt-6">
-                <h2 className="font-bold">Upload File Here</h2>
-                <div className="flex justify-center items-center w-full">
-                    <button className="border-2 border-dashed border-gray-300 rounded-md p-6 w-full text-gray-500 hover:border-blue-500">
-                    + Upload File Here
-                    </button>
-                </div>
-                </div>
+                        <h2 className="font-bold">Postular al Trabajo</h2>
+                        <div className="flex justify-center items-center w-full">
+                            <div className="flex flex-col w-full">
+                                <select
+                                    className="border-2 border-gray-300 rounded-md p-2 w-full text-gray-700"
+                                    value={userCV || ''}
+                                    onChange={(e) => setUserCV(e.target.value)}
+                                    disabled
+                                >
+                                    <option value="">Seleccionar CV</option>
+                                    {userCV && <option value={userCV}>CV {userCV}</option>}
+                                </select>
+                                <button
+                                    onClick={handleApply}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                                >
+                                    Postular
+                                </button>
+                            </div>
+                        </div>
+                    </div>
             </div>
             </Layout>
         </>
     );
+}
+
+export async function getStaticPaths() {
+    try {
+        const response = await axios.get('http://localhost:8000/jobs/jobs'); // Usa el endpoint de tu API
+        const jobs = response.data;
+
+        const paths = jobs.map((job) => ({
+            params: { id: job.id.toString() },
+        }));
+
+        return { paths, fallback: false };
+    } catch (error) {
+        console.error('Error fetching job IDs:', error);
+        return { paths: [], fallback: false };
+    }
+}
+
+export async function getStaticProps({ params }) {
+    try {
+        const response = await axios.get(`http://localhost:8000/jobs/jobs/${params.id}`); // Usa el endpoint de tu API
+        const job = response.data;
+
+        return {
+            props: {
+                job,
+            },
+        };
+    } catch (error) {
+        console.error('Error fetching job data:', error);
+        return {
+            props: {
+                job: null,
+            },
+        };
+    }
 }
