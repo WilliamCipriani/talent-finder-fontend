@@ -1,4 +1,3 @@
-// src/lib/axios.js
 import axios from 'axios';
 
 const instance = axios.create({
@@ -6,12 +5,14 @@ const instance = axios.create({
 });
 
 // Añadir un interceptor para enviar el token en cada solicitud
-instance.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+if (typeof window !== 'undefined') {
+  instance.interceptors.request.use(config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+}
 
 export default instance;
