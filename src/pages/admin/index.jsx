@@ -1,15 +1,9 @@
+import dynamic from 'next/dynamic';
 
-import AdminLayout from '@/components/AdminLayout';
-import CreateJob from '@/components/CreateJob';
-import ViewJobs from '@/components/ViewJobs';
+const AdminDashboard = dynamic(() => import('../../components/AdminDashboard'), { ssr: false });
 
-const AdminDashboard = () => {
-    return (
-        <AdminLayout>
-            <CreateJob />
-            <ViewJobs />
-        </AdminLayout>
-    );
+const AdminPage = () => {
+  return <AdminDashboard />;
 };
 
-export default AdminDashboard;
+export default AdminPage;

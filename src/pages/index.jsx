@@ -19,13 +19,17 @@ export default function Home() {
         password,
       });
 
-      const { token } = response.data;
+      const { token, role_id } = response.data;
 
       // Guardar el token en localStorage
       localStorage.setItem('token', token);
+      console.log(role_id)
 
-      // Redirigir al usuario a la página de inicio
-      router.push('/inicio');
+      if (role_id === 2 || role_id === 3) {
+        router.push('/admin');
+      } else {
+        router.push('/inicio');
+      }
     } catch (err) {
       setError('Login failed. Please check your email and password.');
       console.error('Error during login:', err);
