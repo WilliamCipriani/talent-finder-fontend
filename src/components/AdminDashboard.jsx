@@ -3,28 +3,23 @@ import Sidebar from './Slidebar';
 import Navbar from './Navbar';
 import JobTable from './JobTable';
 import ApplicantList from './ApplicantList';
-
+import Dashboard from './Dashboard'; // Importa el componente Dashboard
 
 const AdminDashboard = () => {
-  const [view, setView] = useState('jobTable'); 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [view, setView] = useState({ view: 'jobTable', company: null });
 
   const renderView = () => {
-    switch(view) {
+    switch(view.view) {
       case 'jobTable':
         return <JobTable />;
       case 'applicantList':
-        return <ApplicantList />;
+        return <ApplicantList company={view.company} />;
+      case 'dashboard':
+        return <Dashboard />; // Añade la opción para renderizar el Dashboard
       default:
         return <JobTable />;
     }
   }
-
-  const handleCreateJob = (job) => {
-    console.log(job);
-    setIsModalOpen(false);
-    // Lógica para guardar el nuevo trabajo
-  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -32,8 +27,7 @@ const AdminDashboard = () => {
       <div className="flex-1 flex flex-col">
         <Navbar />
         <div className="p-4">
-        {view.view === 'jobTable' && <JobTable />}
-        {view.view === 'applicantList' && <ApplicantList company={view.company} />}
+          {renderView()} {/* Renderiza la vista seleccionada */}
         </div>
       </div>
     </div>

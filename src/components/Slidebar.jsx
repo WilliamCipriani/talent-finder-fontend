@@ -73,6 +73,12 @@ const Sidebar = ({ setView }) => {
           </ul>
         )}
       </div>
+      <button 
+        className="bg-gray-300 text-black px-4 py-2 rounded w-full text-left mt-10"
+        onClick={() => setView({ view: 'dashboard' })}
+      >
+        Dashboard
+      </button>
     </div>
   );
 }

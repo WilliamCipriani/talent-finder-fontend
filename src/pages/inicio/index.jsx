@@ -3,6 +3,7 @@ import Layout from "@/components/Layout";
 import SearchJob from "@/components/SearchJob";
 import JobCard from "@/components/JobCard";
 import Header from "@/components/Header";
+import { useUser } from '@/context/UserContext';
 import axios from 'axios';
 
 export default function InicioPage() {
@@ -12,9 +13,14 @@ export default function InicioPage() {
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+  const { user, setUser } = useUser();
 
   useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+
     const fetchJobs = async () => {
       try {
         const response = await axios.get('http://localhost:8000/jobs/jobs'); // Usa tu endpoint de la API
@@ -28,7 +34,7 @@ export default function InicioPage() {
     };
 
     fetchJobs();
-  }, []);
+  }, [setUser]);
 
   const handleSearch = (term, type) => {
     setSearchTerm(term);
@@ -63,6 +69,7 @@ export default function InicioPage() {
         title="Trabajos Disponibles"
         subtitle="Conoce más sobre nuestras oportunidades de empleo."
         backgroundClass="bg-hero-inicio"
+        userName={user ? user.full_name : 'Usuario'}
       />
       <Layout>
         <SearchJob onSearch={handleSearch} />

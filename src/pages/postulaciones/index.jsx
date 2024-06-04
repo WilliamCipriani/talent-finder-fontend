@@ -3,6 +3,7 @@ import Layout from "@/components/Layout";
 import PositionCard from "@/components/PositionCard";
 
 export default function MyPostulaciones() {
+ 
   return (
     <>
       <Header
