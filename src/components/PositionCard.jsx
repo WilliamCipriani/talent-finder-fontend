@@ -20,4 +20,4 @@ export default function PositionCard({ title, description, progress  }) {
             </div>
         </div>
     );
-  }
+}
