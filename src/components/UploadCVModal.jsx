@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../lib/axios';
+import { FaTrash } from 'react-icons/fa';
 
 export default function UploadCVModal({ isOpen, onClose }) {
   const [file, setFile] = useState(null);
@@ -89,6 +90,24 @@ export default function UploadCVModal({ isOpen, onClose }) {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete('/cv/delete', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}` // Asegúrate de que el token se está enviando
+        }
+      });
+
+      if (response.status === 200) {
+        alert('CV eliminado exitosamente');
+        setUserCV(null);
+      }
+    } catch (error) {
+      alert('Error al eliminar el CV');
+      console.error('Error:', error.response?.data || error.message);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -98,15 +117,23 @@ export default function UploadCVModal({ isOpen, onClose }) {
         {userCV && (
           <div className="mb-4">
             <p className="text-gray-700">Ya tienes un CV subido:</p>
-            <a
-              href={userCV.secure_url} // Utiliza secure_url para el enlace de descarga
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline"
-              download={`${userCV.public_id}.pdf`}
-            >
-              Descargar CV
-            </a>
+            <div className='flex text-center items-center gap-x'>
+              <a
+                href={userCV.secure_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+                download={`${userCV.public_id}.pdf`}
+              >
+                Descargar CV
+              </a>
+              <button
+                onClick={handleDelete}
+                className="text-red-600 font-bold rounded-lg focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+              >
+                <FaTrash className="mr-2" />
+              </button>
+            </div>
           </div>
         )}
         <form onSubmit={handleSubmit}>

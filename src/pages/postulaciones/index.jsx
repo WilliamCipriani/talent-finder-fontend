@@ -1,8 +1,34 @@
+import { useEffect, useState } from 'react';
 import Header from "@/components/Header";
 import Layout from "@/components/Layout";
 import PositionCard from "@/components/PositionCard";
+import { useUser } from '@/context/UserContext'
+import axios from '@/lib/axios'
 
 export default function MyPostulaciones() {
+  const { user } = useUser();
+  const [applications, setApplications] = useState([]);
+
+  
+  useEffect(() => {
+    const fetchApplications = async () => {
+      if (user) {
+        try {
+          const response = await axios.get(`/applications/applications/${user.id}`);
+          setApplications(response.data);
+        } catch (error) {
+          console.error('Error fetching applications:', error);
+        }
+      }
+    };
+
+    fetchApplications();
+  }, [user]);
+
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
  
   return (
     <>
@@ -13,16 +39,14 @@ export default function MyPostulaciones() {
       />
       <Layout>
         <div className="max-w-4xl mx-auto mt-10 space-y-4">
-          <PositionCard
-            title="Desarrollo Front-End"
-            description="Tecnica y Proyectos S.A."
-            progress={80} // Suponiendo que el progreso es del 75%
-          />
-          <PositionCard
-            title="Desarrollo Back-End Junior"
-            description="Tecnica y Proyectos S.A."
-            progress={20} // Suponiendo que el progreso es del 50%
-          />
+          {applications.map((application) => (
+            <PositionCard
+              key={application.id}
+              title={application.title}
+              description={application.company}
+              status={application.status} // Mostrar el estado en lugar del progreso
+            />
+          ))} 
         </div>
       </Layout>
     </>
