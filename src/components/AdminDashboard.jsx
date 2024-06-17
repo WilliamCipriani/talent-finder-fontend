@@ -15,7 +15,7 @@ const AdminDashboard = () => {
       case 'applicantList':
         return <ApplicantList company={view.company} />;
       case 'dashboard':
-        return <Dashboard />; // Añade la opción para renderizar el Dashboard
+        return <Dashboard />; 
       default:
         return <JobTable />;
     }
