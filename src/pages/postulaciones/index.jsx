@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Header from "@/components/Header";
 import Layout from "@/components/Layout";
 import PositionCard from "@/components/PositionCard";
-import { useUser } from '@/context/UserContext'
+import { useUser } from '@/context/userContext'
 import axios from '@/lib/axios'
 
 export default function MyPostulaciones() {

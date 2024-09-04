@@ -4,7 +4,7 @@ import UploadCVModal from './UploadCVModal';
 import NotificationModal from './NotificationModal';
 import { FaRegUser, FaBell } from "react-icons/fa";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
-import { useUser } from '@/context/UserContext';
+import { useUser } from '@/context/userContext';
 import Link from 'next/link';
 import axios from '../lib/axios';
 
