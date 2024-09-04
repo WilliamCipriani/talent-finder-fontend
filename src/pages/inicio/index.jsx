@@ -3,7 +3,7 @@ import Layout from "@/components/Layout";
 import SearchJob from "@/components/SearchJob";
 import JobCard from "@/components/JobCard";
 import Header from "@/components/Header";
-import { useUser } from '@/context/userContext';
+import { useUser } from '@/context/UserContext';
 import axios from 'axios';
 
 export default function InicioPage() {
