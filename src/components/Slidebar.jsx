@@ -8,7 +8,7 @@ const Sidebar = ({ setView }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('jobs/jobs');
+        const response = await axios.get('/jobs/jobs');
         const jobs = response.data;
         
         // Agrupar los trabajos por compañía y contar la cantidad de puestos de trabajo
